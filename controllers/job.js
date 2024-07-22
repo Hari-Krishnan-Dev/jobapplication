@@ -1,5 +1,5 @@
 const express =require('express');
-const jobmodel = require('../model/jobs')
+const jobmodel = require('../model/job')
 
 
 const createjobs  =async (req,res)=>{

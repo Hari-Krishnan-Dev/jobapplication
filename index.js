@@ -16,7 +16,7 @@ mongoose
 //--------------routes-----------------------------------
 
 
-app.use(jobRoutes)
+app.use('/app',jobRoutes)
 
 app.listen(process.env.PORT,()=>{
     console.log(`Server Started ${process.env.PORT}`);

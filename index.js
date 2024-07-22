@@ -9,20 +9,17 @@ dotenv.config();
 
 //----------- moongose-----------------------------------
 mongoose
-.connect("mongodb://localhost:27017/jobApp")
+.connect(process.env.STRING)
 .then(()=>console.log("Connection done"))
 .catch((err)=>console.log("Error in connection"+err))
 
 //--------------routes-----------------------------------
 
-app.get('/',(req,res)=>{
-    res.send("helelo")
-})
 
 app.use(jobRoutes)
 
-app.listen(8080,()=>{
-    console.log("Server Started");
+app.listen(process.env.PORT,()=>{
+    console.log(`Server Started ${process.env.PORT}`);
 })
 
 

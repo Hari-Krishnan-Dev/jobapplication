@@ -1,73 +1,69 @@
-const jobModel = require("../model/job");
+const express =require('express');
+const jobmodel = require('../model/jobs')
 
-const createJobs = async (req, res) => {
-  try {
-    const jobObj = req.body;
-    const newJob = new jobModel(jobObj);
-    const newlySavedJob = await newJob.save();
-    res.json({
-      success: true,
-      message: "Job added succesful",
-      jobId: newlySavedJob._id,
-    });
-  } catch {
-    res.json({
-      success: false,
-      message: "Something went wrong, please try again after sometime",
-    });
-  }
+
+const createjobs  =async (req,res)=>{
+const jobsentry = req.body;
+const newjob = new jobmodel(jobsentry);
+const jobinfo = await newjob.save();
+console.log(newjob);
+res.json({
+    message : " new job has created successfully",
+    "ID" : jobinfo._id
+})
+}
+const listjobs = async (req,res)=>{
+const {minsalary,maxsalary} = req.query;
+const listofjobs = await jobmodel.find({
+    $and : [
+        {salary :{$gte : minsalary}},
+       {salary :{$lte : maxsalary} }
+    ]
+})
+res.json({
+    success : true,
+    message:"list of jobs",
+    results:listofjobs
+}
+)
+}
+const updatejobs =async(req,res)=>{
+    const jobid = req.params.id;
+    console.log(jobid);
+    try {
+        await jobmodel.findByIdAndUpdate(jobid,req.body)
+        res.json({
+            success :true,
+            id : jobid,
+            message :"the data has successfully updated"
+        })
+    } catch (error) {
+        res.status(404).json({
+            success:false,
+            message:error.message
+        })
+    }
+
+
+}
+const deletejobs = async (req, res) => {
+    try {
+        const findjob = req.params.id;
+        await jobmodel.findByIdAndDelete(findjob);
+        res.json({
+            id: findjob,
+            message: 'Job has been deleted'
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error deleting job', error });
+    }
 };
 
-const listJobs = async (req, res) => {
-  try {
-
-    const jobsList = await jobModel.find();
-
-    res.json({
-      success: true,
-      message: "List of jobs",
-      result: jobsList,
-    });
-  } catch {
-    res.json({
-      success: false,
-      message: "Something went wrong, please try again after sometime",
-    });
-  }
-};
-
-const editJobs = async (req, res) => {
-  try {
-  const id = req.params.id;
-  console.log("Edited if-"+id);
-  await jobModel.findByIdAndUpdate(id,req.body);
-  res.json({
-    success: true,
-    message: "Dummy edit",
-    })
-  }
-    catch (err) {
-    res.json({
-      success: false,
-      message: "Something went wrong, please try again after sometime",
-    });
-};
-  }
-
-const deleteJobs = async (req, res) => {
-  const jobId = req.params.id;
-  await jobModel.findOneAndDelete(jobId);
-  res.json({
-    success: true,
-    message: "Deleted",
-  });
-};
-
-const jobController = {
-  createJobs,
-  editJobs,
-  listJobs,
-  deleteJobs,
-};
-
-module.exports = jobController;
+const jobscontroller = {
+    createjobs,
+    listjobs,
+    updatejobs,
+    deletejobs
+}
+module.exports = jobscontroller;
